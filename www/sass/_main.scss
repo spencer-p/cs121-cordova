@@ -1,0 +1,74 @@
+.colorful {
+  color: $clrHilight;
+}
+.app {
+  margin: 10px;
+  .topbar {
+    // border-bottom: 1px solid $clrBorders;
+  }
+
+  div#truthdisplay {
+    width: 240px;
+    height: 80px;
+    position: relative;
+  }
+
+  div#truth_wording {
+    p.truthiness_title {
+      margin-bottom: 5px;
+      color: $clrConsensus;
+    }
+  }
+
+  div#truthindicator {
+    width: 40px;
+    position: absolute;
+    top: 45px;
+    text-align: center;
+  }
+
+  div#truthbar {
+    position: absolute;
+    left: 20px;
+    top: 30px;
+    width: 200px;
+    height: 20px;
+    $svg-gradient-shim-threshold: 1 !global;
+    @include background-image(linear-gradient(to right, $clrBarNo, $clrBarBoh, $clrBarBoh, $clrBarYes));
+    border: 1px solid $clrTruthBorder;
+  }
+}
+
+div.vote {
+  p.explanation {
+    font-size: 80%;
+    color: $clrExplanation;
+  }
+}
+
+.fa {
+  &.fa-spinner {
+    color: $clrSpinners;
+  }
+  &.appbtn {
+    text-shadow: 4px 4px 8px $clrShadow;
+    &.fa-check-circle, &.fa-smile-o, &.fa-thumbs-o-up, &.fa-thumbs-up {
+      color: $clrYes;
+      &:hover, &:active {
+        color: lighten($clrYes, 5%);
+      }
+    }
+    &.fa-times-circle, &.fa-frown-o, &.fa-thumbs-o-down, &.fa-thumbs-down {
+      color: $clrNo;
+      &:hover, &:active {
+        color: lighten($clrNo, 5%);
+      }
+    }
+    &.fa-question-circle, &.fa-question-circle-o {
+      color: $clrQuestion;
+      &:hover, &:active {
+        color: lighten($clrQuestion, 5%);
+      }
+    }
+  }
+}

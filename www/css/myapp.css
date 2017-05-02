@@ -1,0 +1,81 @@
+/* line 1, ../sass/_main.scss */
+.colorful {
+  color: #bb8833;
+}
+
+/* line 4, ../sass/_main.scss */
+.app {
+  margin: 10px;
+}
+/* line 10, ../sass/_main.scss */
+.app div#truthdisplay {
+  width: 240px;
+  height: 80px;
+  position: relative;
+}
+/* line 17, ../sass/_main.scss */
+.app div#truth_wording p.truthiness_title {
+  margin-bottom: 5px;
+  color: #666;
+}
+/* line 23, ../sass/_main.scss */
+.app div#truthindicator {
+  width: 40px;
+  position: absolute;
+  top: 45px;
+  text-align: center;
+}
+/* line 30, ../sass/_main.scss */
+.app div#truthbar {
+  position: absolute;
+  left: 20px;
+  top: 30px;
+  width: 200px;
+  height: 20px;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2FhMDAwMCIvPjxzdG9wIG9mZnNldD0iMzMuMzMzMzMlIiBzdG9wLWNvbG9yPSIjZGRkZGRkIi8+PHN0b3Agb2Zmc2V0PSI2Ni42NjY2NyUiIHN0b3AtY29sb3I9IiNkZGRkZGQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMGFhMDAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #aa0000), color-stop(33.33333%, #dddddd), color-stop(66.66667%, #dddddd), color-stop(100%, #00aa00));
+  background-image: -moz-linear-gradient(left, #aa0000, #dddddd, #dddddd, #00aa00);
+  background-image: -webkit-linear-gradient(left, #aa0000, #dddddd, #dddddd, #00aa00);
+  background-image: linear-gradient(to right, #aa0000, #dddddd, #dddddd, #00aa00);
+  border: 1px solid #888;
+}
+
+/* line 43, ../sass/_main.scss */
+div.vote p.explanation {
+  font-size: 80%;
+  color: #888;
+}
+
+/* line 50, ../sass/_main.scss */
+.fa.fa-spinner {
+  color: #bbb;
+}
+/* line 53, ../sass/_main.scss */
+.fa.appbtn {
+  text-shadow: 4px 4px 8px #bbbbbb;
+}
+/* line 55, ../sass/_main.scss */
+.fa.appbtn.fa-check-circle, .fa.appbtn.fa-smile-o, .fa.appbtn.fa-thumbs-o-up, .fa.appbtn.fa-thumbs-up {
+  color: #2f9834;
+}
+/* line 57, ../sass/_main.scss */
+.fa.appbtn.fa-check-circle:hover, .fa.appbtn.fa-check-circle:active, .fa.appbtn.fa-smile-o:hover, .fa.appbtn.fa-smile-o:active, .fa.appbtn.fa-thumbs-o-up:hover, .fa.appbtn.fa-thumbs-o-up:active, .fa.appbtn.fa-thumbs-up:hover, .fa.appbtn.fa-thumbs-up:active {
+  color: #35ab3b;
+}
+/* line 61, ../sass/_main.scss */
+.fa.appbtn.fa-times-circle, .fa.appbtn.fa-frown-o, .fa.appbtn.fa-thumbs-o-down, .fa.appbtn.fa-thumbs-down {
+  color: #ce3f33;
+}
+/* line 63, ../sass/_main.scss */
+.fa.appbtn.fa-times-circle:hover, .fa.appbtn.fa-times-circle:active, .fa.appbtn.fa-frown-o:hover, .fa.appbtn.fa-frown-o:active, .fa.appbtn.fa-thumbs-o-down:hover, .fa.appbtn.fa-thumbs-o-down:active, .fa.appbtn.fa-thumbs-down:hover, .fa.appbtn.fa-thumbs-down:active {
+  color: #d35248;
+}
+/* line 67, ../sass/_main.scss */
+.fa.appbtn.fa-question-circle, .fa.appbtn.fa-question-circle-o {
+  color: #6683fc;
+}
+/* line 69, ../sass/_main.scss */
+.fa.appbtn.fa-question-circle:hover, .fa.appbtn.fa-question-circle:active, .fa.appbtn.fa-question-circle-o:hover, .fa.appbtn.fa-question-circle-o:active {
+  color: #7f97fc;
+}
