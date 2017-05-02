@@ -32,19 +32,6 @@ var app = function() {
         // This callback is called once Cordova has finished its own initialization.
         console.log("The device is ready");
         $("#vue-div").show();
-        // Gets the file for storing the secret.
-        self.identityFile = null;
-        self.user_identity = null;
-        var platform = device.platform;
-        console.log('platform: ' + platform);
-
-        // Initializes identity.
-        if (platform == "browser") {
-            self.user_identity = "test-browser";
-        } else {
-            self.user_identity = device.uuid;
-        }
-        console.log("Identity: " + self.user_identity);
         self.is_configured = true;
     };
 
