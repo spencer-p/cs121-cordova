@@ -7,3 +7,14 @@
 .app {
   margin: 10px;
 }
+/* line 9, ../sass/_main.scss */
+.app .stopbutton {
+  margin-top: 30px;
+}
+/* line 12, ../sass/_main.scss */
+.app .mytextcolumns {
+  color: #996671;
+  font-style: italic;
+  padding-left: 10px;
+  padding-right: 10px;
+}
