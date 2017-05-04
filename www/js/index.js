@@ -29,10 +29,19 @@ var app = function() {
     };
 
     self.ondeviceready = function () {
-        // This callback is called once Cordova has finished its own initialization.
+        // This callback is called once Cordova has finished
+        // its own initialization.
         console.log("The device is ready");
-        $("#vue-div").show();
+        $("#vue-div").show(); // This is jQuery.
         self.is_configured = true;
+    };
+
+    self.refresh = function () {
+        var new_list = [
+            {title: 'wp', subtitle: 'from dc'},
+            {title: 'mn', subtitle: 'from sb'}
+        ];
+        self.vue.papers = new_list;
     };
 
     self.vue = new Vue({
@@ -40,8 +49,13 @@ var app = function() {
         delimiters: ['${', '}'],
         unsafeDelimiters: ['!{', '}'],
         data: {
+            papers: [
+                {title: 'nyt', subtitle: 'from ny'},
+                {title: 'lat', subtitle: 'from la'}
+            ]
         },
         methods: {
+            refresh: self.refresh
         }
 
     });

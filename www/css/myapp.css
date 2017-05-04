@@ -18,3 +18,8 @@
   padding-left: 10px;
   padding-right: 10px;
 }
+/* line 18, ../sass/_main.scss */
+.app .title {
+  font-weight: bold;
+  font-size: 150%;
+}

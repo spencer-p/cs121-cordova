@@ -46,19 +46,12 @@
 
     <div id="vue-div" class="app" style="display:none">
 
-        <h1>Hello class!</h1>
-        <p>It seems that this minimal app is working.</p>
+        <button v-on:click="refresh">Refresh</button>
 
-        <div class="container mytextcolumns">
-            <div class="half compressible">
-                Nel bel <span class="blue">mezzo del cammin</span> di nostra vita
-            </div>
-            <div class="half compressible red">
-                It was the best of times, it was the worst of times.
-            </div>
+        <div v-for="p in papers" class="newspaper">
+            <div class="title">${p.title}</div>
+            <div class="subtitles">${p.subtitle}</div>
         </div>
-
-        <button class="stopbutton"><i class="fa fa-stop-circle"></i> PLEASE STOP</button>
 
     </div>
     <script type="text/javascript" src="cordova.js"></script>
