@@ -49,7 +49,8 @@
         <div class="container chessboard">
             <table>
                 <tr v-for="i in [0, 1, 2, 3]">
-                    <td v-for="j in [0, 1, 2, 3]" v-on:click="shuffle(i,j)" v-bind:class="{red: 4*i+j<8, black: 4*i+j == 15}" class="center">
+                    <td v-for="j in [0, 1, 2, 3]" v-on:click="shuffle(i,j)"
+                        v-bind:class="{red: 4*i+j<8, black: 4*i+j == 15}" class="center">
                         (${i}, ${j}): ${board[4*i + j]}
                     </td>
                 </tr>
