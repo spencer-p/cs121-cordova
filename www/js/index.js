@@ -45,6 +45,11 @@ var app = function() {
         console.log("Shuffle:" + i + ", " + j);
     };
 
+    self.scramble = function() {
+        // Read the Wikipedia article.  If you just randomize,
+        // the resulting puzzle may not be solvable.
+    };
+
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],
@@ -54,7 +59,8 @@ var app = function() {
         },
         methods: {
             reset: self.reset,
-            shuffle: self.shuffle
+            shuffle: self.shuffle,
+            scramble: self.scramble
         }
 
     });
