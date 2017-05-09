@@ -40,6 +40,11 @@ var app = function() {
         self.vue.board = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
     };
 
+    self.shuffle = function(i, j) {
+        // You need to implement this.
+        console.log("Shuffle:" + i + ", " + j);
+    };
+
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],
@@ -48,7 +53,8 @@ var app = function() {
             board: []
         },
         methods: {
-            reset: self.reset
+            reset: self.reset,
+            shuffle: self.shuffle
         }
 
     });
