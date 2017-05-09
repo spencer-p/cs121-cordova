@@ -46,11 +46,18 @@
 
     <div id="vue-div" class="app" style="display:none">
 
-        <button v-on:click="refresh">Refresh</button>
+        <div class="container chessboard">
+            <table>
+                <tr v-for="i in [0, 1, 2, 3]">
+                    <td v-for="j in [0, 1, 2, 3]" class="center">
+                        (${i}, ${j}): ${board[4*i + j]}
+                    </td>
+                </tr>
+            </table>
 
-        <div v-for="p in papers" class="newspaper">
-            <div class="title">${p.title}</div>
-            <div class="subtitles">${p.subtitle}</div>
+        </div>
+        <div class="container center resetbutton">
+            <button v-on:click="reset">Reset</button>
         </div>
 
     </div>

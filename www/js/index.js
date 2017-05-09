@@ -36,12 +36,8 @@ var app = function() {
         self.is_configured = true;
     };
 
-    self.refresh = function () {
-        var new_list = [
-            {title: 'wp', subtitle: 'from dc'},
-            {title: 'mn', subtitle: 'from sb'}
-        ];
-        self.vue.papers = new_list;
+    self.reset = function () {
+        self.vue.board = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
     };
 
     self.vue = new Vue({
@@ -49,16 +45,15 @@ var app = function() {
         delimiters: ['${', '}'],
         unsafeDelimiters: ['!{', '}'],
         data: {
-            papers: [
-                {title: 'nyt', subtitle: 'from ny'},
-                {title: 'lat', subtitle: 'from la'}
-            ]
+            board: []
         },
         methods: {
-            refresh: self.refresh
+            reset: self.reset
         }
 
     });
+
+    self.reset();
 
     return self;
 };

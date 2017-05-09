@@ -8,18 +8,16 @@
   margin: 10px;
 }
 /* line 9, ../sass/_main.scss */
-.app .stopbutton {
-  margin-top: 30px;
+.app .chessboard {
+  margin: 20px;
+  border: 3px solid black;
+}
+/* line 10, ../sass/_main.scss */
+.app .chessboard table {
+  width: 100%;
 }
 /* line 12, ../sass/_main.scss */
-.app .mytextcolumns {
-  color: #996671;
-  font-style: italic;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-/* line 18, ../sass/_main.scss */
-.app .title {
-  font-weight: bold;
-  font-size: 150%;
+.app .chessboard table td {
+  padding: 10px;
+  border: 2px solid black;
 }
