@@ -138,9 +138,16 @@ var app = function() {
 				dirnumber = newdir;
 			}
 
-			// Do another move. Timeout is none if fail, or wait if succeeded (looks 
-			// like an animation). Only increments n if this move succeeded.
-			setTimeout(scrambleOnce, success?TIMEOUT:0, dirnumber, n+(success?1:0), max);
+			// Do another move
+			if (success) {
+				// If the last move was successful, we wait for the next one
+				// to give the appearance of an animation.
+				setTimeout(scrambleOnce, TIMEOUT, dirnumber, n+1, max);
+			}
+			else {
+				// If the last move failed, just try again immediately
+				scrambleOnce(dirnumber, n, max);
+			}
 		}
 
 		// Start the scramble
