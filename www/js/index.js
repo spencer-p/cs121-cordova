@@ -75,37 +75,76 @@ var app = function() {
 		return false;
     };
 
+	self.deltaPositionInBounds = function (x, y) {
+		var i = x + self.emptypos.x;
+		var j = y + self.emptypos.y;
+		return (i >= 0 && i <= 3 && j >= 0 && j <= 3)
+	}
+
     self.scramble = function() {
 		
-		// Four different displacements we can go (in order: N, W, E, S)
-		var DISP = [[ 0, 1 ],[1, 0],[-1, 0],[0, -1]]
+		// Four different DIRSlacements we can go (in order: N, W, S, E)
+		var DIRS = [[ 0, 1 ],[1, 0],[0, -1],[-1, 0]]
 		
 		// Timeout before next
-		var TIMEOUT = 333; // 1/3rd of a second
+		var TIMEOUT = 250; // 1/4rd of a second
+		var CHANCEOFCHANGE = 1/2;
 
 		// Recursive functions scrambles, then calls self
-		// n is loop counter, max is the max number of loops
-		var scrambleOnce = function (n, max) {
+		// dir is direction, n is loop counter, max is the max number of loops
+		var scrambleOnce = function (dirnumber, n, max) {
 			// Base case, stop scrambling if we hit the max
 			if (n > max) {
 				return;
 			}
 
-			// Swap in random direction
-			var dir = DISP[Math.floor(Math.random()*DISP.length)]
-			var success = self.shuffle(self.emptypos.x+dir[0],
-					self.emptypos.y+dir[1]);
+			// Choose a dir if unspecified
+			if (dirnumber === null) {
+				dirnumber = Math.floor(Math.random()*DIRS.length)
+			}
 
-			// If this move failed, do another immediately
-			var timeToNext = success ? TIMEOUT : 0;
+			// Swap in direction
+			var success = self.shuffle(self.emptypos.x+DIRS[dirnumber][0],
+					self.emptypos.y+DIRS[dirnumber][1]);
+			console.log(dirnumber);
 
-			// Do another move after timeout above. Only increments n if
-			// this move succeeded.
-			setTimeout(scrambleOnce, timeToNext, n+(success?1:0), max);
+			// Choose new dir if failed or random chance
+			// This block of code is unfortunately dense. In short, it turns
+			// by 90 degrees and tries to avoid 180s.
+			if (!success || Math.random() < CHANCEOFCHANGE) {
+				// newdir will eventually be our new dir. we'll modify it in
+				// relation to dirnumber.
+				var newdir = dirnumber;
+
+				// Loop makes sure the new position is valid before exiting.
+				do {
+
+					// 50/50 move left or right in array
+					if (Math.random() > 0.5) { // 50%
+						// Subtract one and wrap to max.
+						newdir = dirnumber-1;
+						if (newdir < 0) {
+							newdir = DIRS.length-1;
+						}
+					}
+					else {
+						// add and wrap
+						newdir = (dirnumber+1)%DIRS.length;
+					}
+
+				} while (!self.deltaPositionInBounds(DIRS[newdir][0], DIRS[newdir][1]));
+
+				// Success. Assign new direction and move on.
+				dirnumber = newdir;
+			}
+
+			// Do another move. Timeout is none if fail, or wait if succeeded (looks 
+			// like an animation). Only increments n if this move succeeded.
+			setTimeout(scrambleOnce, success?TIMEOUT:0, dirnumber, n+(success?1:0), max);
 		}
 
 		// Start the scramble
-		scrambleOnce(1, 16);
+		scrambleOnce(null, 1, 32);
 
     };
 
