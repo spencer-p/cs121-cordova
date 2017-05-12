@@ -120,7 +120,7 @@ var app = function() {
 				do {
 
 					// 50/50 move left or right in array
-					if (Math.random() > 0.5) { // 50%
+					if (Math.random() > 0.5) {
 						// Subtract one and wrap to max.
 						newdir = dirnumber-1;
 						if (newdir < 0) {
