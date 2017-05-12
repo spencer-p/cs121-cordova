@@ -46,12 +46,12 @@
 
     <div id="vue-div" class="app" style="display:none">
 
-        <div class="container chessboard">
+        <div id="board" class="container chessboard">
             <table>
                 <tr v-for="i in [0, 1, 2, 3]">
                     <td v-for="j in [0, 1, 2, 3]" v-on:click="shuffle(i,j)"
-                        v-bind:class="{red: 4*i+j<8, black: 4*i+j == 15}" class="center">
-                        (${i}, ${j}): ${board[4*i + j]}
+						v-bind:class="{red: (board[4*i+j]+Math.floor((board[4*i+j]-1)/4))%2==0, black: board[4*i+j] == 0}" class="center">
+						<span v-if="board[4*i+j] != 0">${board[4*i + j]}</span>
                     </td>
                 </tr>
             </table>
