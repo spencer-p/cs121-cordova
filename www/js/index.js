@@ -35,13 +35,20 @@ var app = function() {
         self.is_configured = true;
     };
 
+    self.set_magic_word = function () {
+        self.vue.chosen_magic_word = self.vue.magic_word;
+    };
+
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],
         unsafeDelimiters: ['!{', '}'],
         data: {
+            magic_word: "",
+            chosen_magic_word: null
         },
         methods: {
+            set_magic_word: self.set_magic_word
         }
 
     });
