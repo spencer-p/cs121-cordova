@@ -73,7 +73,7 @@ var app = function() {
 		
 		// No move
 		return false;
-    };
+	};
 
 	self.deltaPositionInBounds = function (x, y) {
 		var i = x + self.emptypos.x;
@@ -81,14 +81,89 @@ var app = function() {
 		return (i >= 0 && i <= 3 && j >= 0 && j <= 3)
 	}
 
-    self.scramble = function() {
+	// Find number of inversions
+	self.countInversions = function(array) {
+		var count = 0;
+		for (var i = 0; i < array.length; i++) {
+			var current = array[i];
+			for (var j = i+1; j < array.length; j++) {
+				if (array[j] < current && array[j] != 0) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	// Returns x, y of empty space
+	self.indexEmpty = function(array) {
+		for (var i = 0; i < 4; i++) {
+			for (var j = 0; j < 4; j++) {
+				if (array[4*i+j] === 0) {
+					return {x: j, y: i};
+				}
+			}
+		}
+	}
+
+	// solvable if:
+	// - blank is on even row and inversions is odd
+	// - blank is on odd row and inversions is even
+	self.isSolvable = function(array) {
+		var empty = self.indexEmpty(array);
+		var inversions = self.countInversions(array);
+		return (empty.y%2 !== inversions%2);
+	}
+
+	// shuffle from stackoverflow
+	self.shuffleArray = function (array) {
+		var currentIndex = array.length, temporaryValue, randomIndex;
+
+		// While there remain elements to shuffle...
+		while (0 !== currentIndex) {
+
+			// Pick a remaining element...
+			randomIndex = Math.floor(Math.random() * currentIndex);
+			currentIndex -= 1;
+
+			// And swap it with the current element.
+			temporaryValue = array[currentIndex];
+			array[currentIndex] = array[randomIndex];
+			array[randomIndex] = temporaryValue;
+		}
+
+		return array;
+	}
+
+	// Polite scramble makes arrays and checks solvability
+	self.scramble = function() {
+
+		// Shuffle until is solvable
+		var newArray;
+		do {
+			newArray = self.shuffleArray(self.vue.board);
+		} while (!self.isSolvable(newArray));
+
+		// Copy array to make vue update
+		for (var i = 0; i < newArray.length; i++) {
+			self.vue.board.splice(i, 1, newArray[i]);
+		}
+		
+		// Set empty pos
+		self.emptypos = self.indexEmpty(newArray);
+
+	}
+
+	// Fun scramble. Animates random movements.
+	self.animatedScramble = function() {
 		
 		// Four different DIRSlacements we can go (in order: N, W, S, E)
 		var DIRS = [[ 0, 1 ],[1, 0],[0, -1],[-1, 0]]
 		
 		// Timeout before next
-		var TIMEOUT = 250; // 1/4rd of a second
+		var TIMEOUT = 100; // in milliseconds
 		var CHANCEOFCHANGE = 1/2;
+		var NUMMOVES = 32;
 
 		// Recursive functions scrambles, then calls self
 		// dir is direction, n is loop counter, max is the max number of loops
@@ -106,7 +181,6 @@ var app = function() {
 			// Swap in direction
 			var success = self.shuffle(self.emptypos.x+DIRS[dirnumber][0],
 					self.emptypos.y+DIRS[dirnumber][1]);
-			console.log(dirnumber);
 
 			// Choose new dir if failed or random chance
 			// This block of code is unfortunately dense. In short, it turns
@@ -151,7 +225,7 @@ var app = function() {
 		}
 
 		// Start the scramble
-		scrambleOnce(null, 1, 32);
+		scrambleOnce(null, 1, NUMMOVES);
 
     };
 
@@ -165,7 +239,8 @@ var app = function() {
         methods: {
             reset: self.reset,
             shuffle: self.shuffle,
-            scramble: self.scramble
+            scramble: self.scramble,
+            animatedScramble: self.animatedScramble
         }
 
     });
