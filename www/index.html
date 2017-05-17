@@ -58,14 +58,15 @@
 
         </div>
         <div class="container center resetbutton">
-            <button v-on:click="reset">Reset</button>
             <button v-on:click="scramble">Polite Scramble</button>
-            <button v-on:click="animatedScramble">Fun Scramble</button>
+            <button v-on:click="animatedScramble">Fun Scramble</button><br>
+			<button v-on:click="impossibleBoard">Extra Hard Scramble</button>
+			<button v-on:click="reset">Reset</button> 
         </div>
 		<div class="container center">
 			There are ${numberOfInversions} inversions. <br>
 			The empty cell is on row ${emptyRow}. <br>
-			This puzzle is <span v-if="!canBeSolved">not </span>solvable.
+			This puzzle is <b v-if="!canBeSolved">not </b>solvable.
 		</div>
 
     </div>

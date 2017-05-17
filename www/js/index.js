@@ -171,6 +171,25 @@ var app = function() {
 
 	}
 
+	// Generate impossible board
+	self.scrambleImpossible = function() {
+
+		// Shuffle until not solvable
+		var newArray;
+		do {
+			newArray = self.shuffleArray(self.vue.board);
+		} while (self.isSolvable(newArray));
+
+		// Copy array to make vue update
+		for (var i = 0; i < newArray.length; i++) {
+			self.vue.board.splice(i, 1, newArray[i]);
+		}
+		
+		// Set empty pos
+		self.emptypos = self.indexEmpty(newArray);
+
+	}
+
 	// Fun scramble. Animates random movements.
 	self.animatedScramble = function() {
 		
@@ -260,7 +279,8 @@ var app = function() {
             reset: self.reset,
             shuffle: self.shuffle,
             scramble: self.scramble,
-            animatedScramble: self.animatedScramble
+            animatedScramble: self.animatedScramble,
+			impossibleBoard: self.scrambleImpossible
         }
 
     });
