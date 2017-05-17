@@ -39,6 +39,9 @@ var app = function() {
     self.reset = function () {
         self.vue.board = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0];
 		self.emptypos = { x: 3, y: 3 };
+		self.vue.canBeSolved = true;
+		self.vue.emptyRow = 3;
+		self.vue.numberOfInversions = 0;
     };
 
     self.shuffle = function(i, j) {
@@ -67,6 +70,9 @@ var app = function() {
 			self.emptypos.x = i;
 			self.emptypos.y = j;
 			
+			// Update display
+			self.isSolvable(self.vue.board);
+
 			// Success
 			return true;
 		}
@@ -100,7 +106,7 @@ var app = function() {
 		for (var i = 0; i < 4; i++) {
 			for (var j = 0; j < 4; j++) {
 				if (array[4*i+j] === 0) {
-					return {x: j, y: i};
+					return {x: i, y: j};
 				}
 			}
 		}
@@ -112,7 +118,18 @@ var app = function() {
 	self.isSolvable = function(array) {
 		var empty = self.indexEmpty(array);
 		var inversions = self.countInversions(array);
-		return (empty.y%2 !== inversions%2);
+		// x is row for our implementation.
+		// Checks that they're not the same (both even or both odd)
+		// Thefefore must be one of two situations described above
+		var solvable = (empty.x%2 !== inversions%2);
+
+		// Update screen
+		self.vue.emptyRow = empty.x;
+		self.vue.numberOfInversions = inversions;
+		self.vue.canBeSolved = solvable;
+
+		// return result
+		return solvable;
 	}
 
 	// shuffle from stackoverflow
@@ -234,7 +251,10 @@ var app = function() {
         delimiters: ['${', '}'],
         unsafeDelimiters: ['!{', '}'],
         data: {
-            board: []
+            board: [],
+			numberOfInversions: 0,
+			emptyRow: 3,
+			canBeSolved: true
         },
         methods: {
             reset: self.reset,
