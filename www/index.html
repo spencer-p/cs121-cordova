@@ -56,13 +56,15 @@
             You are: ${my_role}
         </div>
 
-        <table>
-            <tr v-for="i in [0, 1, 2]">
-                <td v-on:click="play(i,j)" v-for="j in [0, 1, 2]">
-                    ${board[i * 3 + j]}
-                </td>
-            </tr>
-        </table>
+        <div class="board container">
+            <table>
+                <tr v-for="i in [0, 1, 2]">
+                    <td v-on:click="play(i,j)" v-for="j in [0, 1, 2]">
+                        ${board[i * 3 + j]}
+                    </td>
+                </tr>
+            </table>
+        </div>
 
         <div v-if="is_my_turn" class="turn_indicators">
             Play ${my_role}
