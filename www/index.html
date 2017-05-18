@@ -64,6 +64,10 @@
             </tr>
         </table>
 
+        <div v-if="is_my_turn" class="turn_indicators">
+            Play ${my_role}
+        </div>
+
     </div>
 
     <script type="text/javascript" src="cordova.js"></script>

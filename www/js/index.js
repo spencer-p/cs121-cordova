@@ -71,7 +71,6 @@ var app = function() {
 
     // Main function for sending the state.
     self.send_state = function () {
-        self.update_local_vars();
         $.post(server_url + 'store',
             {
                 key: self.vue.chosen_magic_word,
@@ -88,14 +87,14 @@ var app = function() {
             self.state.player_x = self.my_identity;
             self.state.player_o = null;
             self.state.board = self.null_board;
-            self.update_local_vars();
+            self.vue.is_my_turn = false;
             self.send_state();
         } else if (!self.are_both_players_present(data.result)) {
             // Some player is still missing (perhaps us!).
+            self.vue.is_my_turn = false;
             self.state = data.result;
             if (self.state.player_o === self.my_identity || self.state.player_x === self.my_identity) {
                 // We are already present, nothing to do.
-                self.update_local_vars();
             } else {
                 // We are not present.  Let's join if we can.
                 if (self.state.player_x === null) {
@@ -108,7 +107,6 @@ var app = function() {
                 } else {
                     // The magic word is already taken.
                     self.vue.need_new_magic_word = true;
-                    self.update_local_vars();
                 }
             }
         } else {
@@ -117,25 +115,39 @@ var app = function() {
             if (self.state.player_o !== self.my_identity || self.state.player_x !== self.my_identity) {
                 // Again, we are intruding in a game.
                 self.vue.need_new_magic_word = true;
-                self.update_local_vars();
             } else {
                 // Here is the interesting code: we are playing, and the opponent is there.
-                // What are we?
-                if (self.state.player_o === self.my_identity) {
-                    self.vue.my_role = 'o';
-                } else {
-                    self.vue.my_role = 'x';
-                }
-                self.update_local_vars();
+                // Reconciles the state.
+                self.update_local_vars(self.state);
             }
         }
     };
 
-    self.update_local_vars = function () {
-        // Update things like self.vue.is_other_present, etc etc.
-        // Idempotent.
-        // Also displays the board whenever I am part of the game, and blank otherwise.
-        self.vue.board = self.state.board;
+    self.update_local_vars = function (state) {
+        // First, figures out our role.
+        if (state.player_o === self.my_identity) {
+            self.vue.my_role = 'o';
+        } else if (state.player_x === self.my_identity) {
+            self.vue.my_role = 'x';
+        } else {
+            self.vue.my_role = ' ';
+        }
+
+        // Reconciles the board, and computes whose turn it is.
+        for (var i = 0; i < 9; i++) {
+            if (self.vue.board[i] === ' ' || state.board[i] !== ' ') {
+                // The server has new information for this board.
+                self.vue.board[i] = state.board[i];
+                self.state.board[i] = state.board[i];
+            } else if (self.vue.board[i] !== state.board[i]
+                && self.vue.board[i] !== ' ' && state.board[i] !== ' ')  {
+                console.log("Board inconsistency at: " + i);
+                console.log("Local:" + self.vue.board[i]);
+                console.log("Server:" + state.board[i]);
+            }
+        }
+
+        // Compute whether it's my turn on the basis of the now reconciled board.
         self.vue.is_my_turn = (self.vue.board !== null) &&
             (self.vue.my_role === whose_turn(self.vue.board));
     };
@@ -163,16 +175,28 @@ var app = function() {
     self.set_magic_word = function () {
         self.vue.chosen_magic_word = self.vue.magic_word;
         self.vue.need_new_magic_word = false;
-        
+        // Resets board and turn.
+        self.vue.board = self.null_board;
+        self.vue.is_my_turn = false;
+        self.vue.my_role = "";
     };
 
     self.play = function (i, j) {
         // Check that the game is ongoing and that it's our turn to play.
+        if (!self.vue.is_my_turn) {
+            return;
+        }
         // Check also that the square is empty.
+        if (self.vue.board[i * 3 + j] !== ' ') {
+            return;
+        }
         // Update self.vue.board and self.state.board
+        self.vue.board[i * 3 + j] = self.vue.my_role;
+        self.state.board[i * 3 + j] = self.vue.my_role;
         self.send_state();
     };
 
+    
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],
