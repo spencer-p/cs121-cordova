@@ -43,11 +43,8 @@ var app = function() {
     };
 
     // This is the object that contains the information coming from the server.
-    self.state = {
-        player_x: null,
-        player_o: null,
-        board: null
-    };
+    self.player_x = null;
+    self.player_o = null;
 
     // This is the main control loop.
     function call_server() {
@@ -74,7 +71,13 @@ var app = function() {
         $.post(server_url + 'store',
             {
                 key: self.vue.chosen_magic_word,
-                val: JSON.stringify(self.state)
+                val: JSON.stringify(
+                    {
+                        'player_x': self.player_x,
+                        'player_o': self.player_o,
+                        'board': self.vue.board
+                    }
+                )
             }
         );
     };
@@ -84,25 +87,26 @@ var app = function() {
     self.process_server_data = function (data) {
         // If data is null, we send our data.
         if (!data.result) {
-            self.state.player_x = self.my_identity;
-            self.state.player_o = null;
-            self.state.board = self.null_board;
+            self.player_x = self.my_identity;
+            self.player_o = null;
+            self.vue.board = self.null_board;
             self.vue.is_my_turn = false;
             self.send_state();
         } else if (!self.are_both_players_present(data.result)) {
             // Some player is still missing (perhaps us!).
             self.vue.is_my_turn = false;
-            self.state = data.result;
-            if (self.state.player_o === self.my_identity || self.state.player_x === self.my_identity) {
+            self.player_x = data.player_x;
+            self.player_o = data.player_o;
+            if (self.player_o === self.my_identity || self.player_x === self.my_identity) {
                 // We are already present, nothing to do.
             } else {
                 // We are not present.  Let's join if we can.
-                if (self.state.player_x === null) {
+                if (self.player_x === null) {
                     // Preferentially we play as x.
-                    self.state.player_x = self.my_identity;
+                    self.player_x = self.my_identity;
                     self.send_state();
-                } else if (self.state.player_o === null) {
-                    self.state.player_o = self.my_identity;
+                } else if (self.player_o === null) {
+                    self.player_o = self.my_identity;
                     self.send_state();
                 } else {
                     // The magic word is already taken.
@@ -112,22 +116,22 @@ var app = function() {
         } else {
             // Both players are present.
             // Let us determine our role if any.
-            if (self.state.player_o !== self.my_identity || self.state.player_x !== self.my_identity) {
+            if (self.player_o !== self.my_identity || self.player_x !== self.my_identity) {
                 // Again, we are intruding in a game.
                 self.vue.need_new_magic_word = true;
             } else {
                 // Here is the interesting code: we are playing, and the opponent is there.
                 // Reconciles the state.
-                self.update_local_vars(self.state);
+                self.update_local_vars(data);
             }
         }
     };
 
-    self.update_local_vars = function (state) {
+    self.update_local_vars = function (data) {
         // First, figures out our role.
-        if (state.player_o === self.my_identity) {
+        if (data.player_o === self.my_identity) {
             self.vue.my_role = 'o';
-        } else if (state.player_x === self.my_identity) {
+        } else if (data.player_x === self.my_identity) {
             self.vue.my_role = 'x';
         } else {
             self.vue.my_role = ' ';
@@ -135,15 +139,14 @@ var app = function() {
 
         // Reconciles the board, and computes whose turn it is.
         for (var i = 0; i < 9; i++) {
-            if (self.vue.board[i] === ' ' || state.board[i] !== ' ') {
+            if (self.vue.board[i] === ' ' || data.board[i] !== ' ') {
                 // The server has new information for this board.
-                self.vue.board[i] = state.board[i];
-                self.state.board[i] = state.board[i];
-            } else if (self.vue.board[i] !== state.board[i]
-                && self.vue.board[i] !== ' ' && state.board[i] !== ' ')  {
+                self.vue.board[i] = data.board[i];
+            } else if (self.vue.board[i] !== data.board[i]
+                && self.vue.board[i] !== ' ' && data.board[i] !== ' ')  {
                 console.log("Board inconsistency at: " + i);
                 console.log("Local:" + self.vue.board[i]);
-                console.log("Server:" + state.board[i]);
+                console.log("Server:" + data.board[i]);
             }
         }
 
@@ -190,13 +193,12 @@ var app = function() {
         if (self.vue.board[i * 3 + j] !== ' ') {
             return;
         }
-        // Update self.vue.board and self.state.board
+        // Update self.vue.board.
         self.vue.board[i * 3 + j] = self.vue.my_role;
-        self.state.board[i * 3 + j] = self.vue.my_role;
         self.send_state();
     };
 
-    
+
     self.vue = new Vue({
         el: "#vue-div",
         delimiters: ['${', '}'],
