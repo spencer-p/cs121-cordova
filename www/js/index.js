@@ -17,7 +17,7 @@ var app = function() {
     };
 
     self.my_identity = randomString(20);
-    self.null_board = ["", "", "", "", "", "", "", "", ""];
+    self.null_board = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
 
     // Enumerates an array.
     var enumerate = function(v) {
@@ -64,8 +64,6 @@ var app = function() {
         }
     }
 
-    call_server();
-
     // Main function for sending the state.
     self.send_state = function () {
         $.post(server_url + 'store',
@@ -92,46 +90,54 @@ var app = function() {
             self.vue.board = self.null_board;
             self.vue.is_my_turn = false;
             self.send_state();
-        } else if (!self.are_both_players_present(data.result)) {
-            // Some player is still missing (perhaps us!).
-            self.vue.is_my_turn = false;
-            self.player_x = data.player_x;
-            self.player_o = data.player_o;
-            if (self.player_o === self.my_identity || self.player_x === self.my_identity) {
-                // We are already present, nothing to do.
-            } else {
-                // We are not present.  Let's join if we can.
-                if (self.player_x === null) {
-                    // Preferentially we play as x.
-                    self.player_x = self.my_identity;
-                    self.send_state();
-                } else if (self.player_o === null) {
-                    self.player_o = self.my_identity;
-                    self.send_state();
-                } else {
-                    // The magic word is already taken.
-                    self.vue.need_new_magic_word = true;
-                }
-            }
         } else {
-            // Both players are present.
-            // Let us determine our role if any.
-            if (self.player_o !== self.my_identity || self.player_x !== self.my_identity) {
-                // Again, we are intruding in a game.
-                self.vue.need_new_magic_word = true;
+            // I technically don't need to assign this to self, but it helps debug the code.
+            self.server_answer = JSON.parse(data.result);
+            self.player_x = self.server_answer.player_x;
+            self.player_o = self.server_answer.player_o;
+            if (self.player_x === null || self.player_o === null) {
+                // Some player is missing. We cannot play yet.
+                self.vue.is_my_turn = false;
+                console.log("Not all players present.");
+                if (self.player_o === self.my_identity || self.player_x === self.my_identity) {
+                    // We are already present, nothing to do.
+                    console.log("Waiting for other player to join");
+                } else {
+                    console.log("Signing up now.");
+                    // We are not present.  Let's join if we can.
+                    if (self.player_x === null) {
+                        // Preferentially we play as x.
+                        self.player_x = self.my_identity;
+                        self.send_state();
+                    } else if (self.player_o === null) {
+                        self.player_o = self.my_identity;
+                        self.send_state();
+                    } else {
+                        // The magic word is already taken.
+                        self.vue.need_new_magic_word = true;
+                    }
+                }
             } else {
-                // Here is the interesting code: we are playing, and the opponent is there.
-                // Reconciles the state.
-                self.update_local_vars(data);
+                console.log("Both players are present");
+                // Both players are present.
+                // Let us determine our role if any.
+                if (self.player_o !== self.my_identity && self.player_x !== self.my_identity) {
+                    // Again, we are intruding in a game.
+                    self.vue.need_new_magic_word = true;
+                } else {
+                    // Here is the interesting code: we are playing, and the opponent is there.
+                    // Reconciles the state.
+                    self.update_local_vars(self.server_answer);
+                }
             }
         }
     };
 
-    self.update_local_vars = function (data) {
+    self.update_local_vars = function (server_answer) {
         // First, figures out our role.
-        if (data.player_o === self.my_identity) {
+        if (server_answer.player_o === self.my_identity) {
             self.vue.my_role = 'o';
-        } else if (data.player_x === self.my_identity) {
+        } else if (server_answer.player_x === self.my_identity) {
             self.vue.my_role = 'x';
         } else {
             self.vue.my_role = ' ';
@@ -139,14 +145,14 @@ var app = function() {
 
         // Reconciles the board, and computes whose turn it is.
         for (var i = 0; i < 9; i++) {
-            if (self.vue.board[i] === ' ' || data.board[i] !== ' ') {
+            if (self.vue.board[i] === ' ' || server_answer.board[i] !== ' ') {
                 // The server has new information for this board.
-                self.vue.board[i] = data.board[i];
-            } else if (self.vue.board[i] !== data.board[i]
-                && self.vue.board[i] !== ' ' && data.board[i] !== ' ')  {
+                self.vue.board[i] = server_answer.board[i];
+            } else if (self.vue.board[i] !== server_answer.board[i]
+                && self.vue.board[i] !== ' ' && server_answer.board[i] !== ' ')  {
                 console.log("Board inconsistency at: " + i);
                 console.log("Local:" + self.vue.board[i]);
-                console.log("Server:" + data.board[i]);
+                console.log("Server:" + server_answer.board[i]);
             }
         }
 
@@ -170,10 +176,6 @@ var app = function() {
         }
     }
 
-
-    self.are_both_players_present = function (s) {
-        return (s.player_x !== null && s.player_o !== null);
-    };
 
     self.set_magic_word = function () {
         self.vue.chosen_magic_word = self.vue.magic_word;
@@ -209,7 +211,8 @@ var app = function() {
             need_new_magic_word: false,
             my_role: "",
             board: self.null_board,
-            is_other_present: false
+            is_other_present: false,
+            is_my_turn: false
         },
         methods: {
             set_magic_word: self.set_magic_word,
@@ -217,6 +220,8 @@ var app = function() {
         }
 
     });
+
+    call_server();
 
     return self;
 };
