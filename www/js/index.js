@@ -122,9 +122,9 @@ var app = function() {
                 // Here is the interesting code: we are playing, and the opponent is there.
                 // What are we?
                 if (self.state.player_o === self.my_identity) {
-                    self.my_role = 'o';
+                    self.vue.my_role = 'o';
                 } else {
-                    self.my_role = 'x';
+                    self.vue.my_role = 'x';
                 }
                 self.update_local_vars();
             }
@@ -135,11 +135,25 @@ var app = function() {
         // Update things like self.vue.is_other_present, etc etc.
         // Idempotent.
         // Also displays the board whenever I am part of the game, and blank otherwise.
-        self.vue.board = null;
-        self.vue.is_game_ongoing = null;
-        self.vue.my_role = null;
-        self.vue.is_my_turn = false;
+        self.vue.board = self.state.board;
+        self.vue.is_my_turn = (self.vue.board !== null) &&
+            (self.vue.my_role === whose_turn(self.vue.board));
     };
+
+
+    function whose_turn(board) {
+        num_x = 0;
+        num_o = 0;
+        for (var i = 0; i < 9; i++) {
+            if (board[i] === 'x') num_x += 1;
+            if (board[i] === 'o') num_o += 1;
+        }
+        if (num_o >= num_x) {
+            return 'x';
+        } else {
+            return 'o';
+        }
+    }
 
 
     self.are_both_players_present = function (s) {
@@ -149,6 +163,7 @@ var app = function() {
     self.set_magic_word = function () {
         self.vue.chosen_magic_word = self.vue.magic_word;
         self.vue.need_new_magic_word = false;
+        
     };
 
     self.play = function (i, j) {
