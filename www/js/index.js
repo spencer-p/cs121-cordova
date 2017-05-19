@@ -147,7 +147,7 @@ var app = function() {
         for (var i = 0; i < 9; i++) {
             if (self.vue.board[i] === ' ' || server_answer.board[i] !== ' ') {
                 // The server has new information for this board.
-                self.vue.board[i] = server_answer.board[i];
+                Vue.set(self.vue.board, i, server_answer.board[i]);
             } else if (self.vue.board[i] !== server_answer.board[i]
                 && self.vue.board[i] !== ' ' && server_answer.board[i] !== ' ')  {
                 console.log("Board inconsistency at: " + i);
@@ -196,7 +196,9 @@ var app = function() {
             return;
         }
         // Update self.vue.board.
-        self.vue.board[i * 3 + j] = self.vue.my_role;
+        Vue.set(self.vue.board, i * 3 + j, self.vue.my_role);
+        // We have already played.
+        self.vue.is_my_turn = false;
         self.send_state();
     };
 
