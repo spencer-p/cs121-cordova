@@ -40,34 +40,53 @@
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/vue.js"></script>
         <script type="text/javascript" src="js/randomString.js"></script>
+        <script type="text/javascript" src="js/generate_board.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
     </head>
     <body>
 
     <div id="vue-div" class="app" style="display:none">
 
-        <div class="top_input">
+        <div class="top_input centered padded">
             <input v-model="magic_word" placeholder="shared magic word" />
             <button v-on:click="set_magic_word">Play</button>
+            <button v-on:click="new_game">New Game</button>
             <i v-if="need_new_magic_word" class="fa fa-warning"></i>
         </div>
 
-        <div class="role">
-            You are: ${my_role}
-        </div>
+		<div class="padded centered">
+			<div class="status_line">
+				<b>${win_line}</b> ${status_line}
+			</div>
 
-        <div class="board container">
+			<div class="turn">
+				It is <b v-if="!is_my_turn">not </b>your turn.
+			</div>
+		</div>
+
+        <div class="board container padded centered">
             <table>
-                <tr v-for="i in [0, 1, 2]">
-                    <td v-on:click="play(i,j)" v-for="j in [0, 1, 2]">
-                        ${board[i * 3 + j]}
+                <tr v-for="i in [0, 1, 2, 3, 4, 5, 6, 7]">
+                    <td v-on:click="play(i,j)" v-for="j in [0, 1, 2, 3, 4, 5, 6, 7]"
+					   v-bind:class="{ red: opponent_board()[i*8+j] === 'h' }">
+						<template  v-if="opponent_board()[i*8+j] === 'w'">
+							<i class="fa fa-circle" style="color:blue"></i>
+						</template>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <div v-if="is_my_turn" class="turn_indicators">
-            Play ${my_role}
+        <div class="board container padded centered">
+            <table>
+                <tr v-for="i in [0, 1, 2, 3, 4, 5, 6, 7]">
+                    <td v-for="j in [0, 1, 2, 3, 4, 5, 6, 7]"
+						v-bind:class="{ red: own_board()[8*i+j] === 'h',
+										green: typeof(own_board()[8*i+j]) === 'number', 
+										blue: own_board()[8*i+j] === 'w'}">
+                    </td>
+                </tr>
+            </table>
         </div>
 
     </div>
