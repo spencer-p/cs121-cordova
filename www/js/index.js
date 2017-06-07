@@ -67,7 +67,7 @@ var app = function() {
             $.ajax({
                 dataType: 'json',
                 url: server_url +'read',
-                data: {key: "SPJPETER"+self.vue.chosen_magic_word},
+                data: {key: "SPJPETER_PROD"+self.vue.chosen_magic_word},
                 success: self.process_server_data,
                 complete: setTimeout(call_server, call_interval) // Here we go again.
             });
@@ -78,7 +78,7 @@ var app = function() {
     self.send_state = function () {
         $.post(server_url + 'store',
             {
-                key: "SPJPETER"+self.vue.chosen_magic_word,
+                key: "SPJPETER_PROD"+self.vue.chosen_magic_word,
                 val: JSON.stringify(
                     {
                         'player_1': self.player_1,
@@ -110,11 +110,15 @@ var app = function() {
 			var answer = JSON.parse(data.result);
 			if (answer.player_2 === null) {
 				if (answer.player_1 === self.my_identity) {
-					self.vue.status_line = "Wating for second player.";
+					if (!self.vue.status_line.includes("Waiting for second player")) {
+						self.vue.status_line = "Waiting for second player.";
+					}
+					self.vue.need_new_magic_word = false;
 					return;
 				}
-				else if (answer.player_1 === null) {
-					self.vue.status_line = "Other player left. Wating for second player.";
+				else if (answer.player_1 === null) { // both players null
+					self.vue.status_line = "Other player left. Waiting for second player.";
+					self.vue.need_new_magic_word = false;
 					self.player_1 = self.my_identity;
 					self.player_2 = null;
 					self.vue.board_1 = getBoard();
@@ -126,6 +130,7 @@ var app = function() {
 				}
 				else {
 					self.vue.status_line = "Joining the game.";
+					self.vue.need_new_magic_word = false;
 
 					// Set data and send state
 					self.player_1 = answer.player_1;
@@ -148,6 +153,7 @@ var app = function() {
 				}
 				else { // Potentially new turn data
 					self.vue.status_line = "Both players present and transferring data.";
+					self.vue.need_new_magic_word = false;
 					if (answer.turn_count >= self.vue.turn_count && answer.game_count === self.vue.game_count) {
 
 						// Swap turns
@@ -287,8 +293,9 @@ var app = function() {
 
     self.set_magic_word = function () {
 		if (self.vue.chosen_magic_word === self.vue.magic_word) { return; }
+		self.vue.status_line = "Waiting...";
 		// reset board if active
-		if (self.vue.chosen_magic_word !== null && self.player_1 !== self.my_identity && self.player_2 !== self.my_identity) {
+		if (self.vue.chosen_magic_word !== null && (self.player_1 === self.my_identity || self.player_2 === self.my_identity)) {
 			self.player_1 = null;
 			self.player_2 = null;
 			self.vue.board_1 = null;
